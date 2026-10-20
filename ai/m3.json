@@ -1,0 +1,397 @@
+{
+  "generated": "2026-10-21T09:14:45+11:00",
+  "commit": "c6948b5",
+  "member": {
+    "id": "m3",
+    "name": "Yuchen C.",
+    "part": "d Admin System + file storage",
+    "marks": "15",
+    "branch": "m3-admin",
+    "run": "python dev_run.py admin",
+    "check": "python tests/check.py m3"
+  },
+  "instructions": "I'm Yuchen C., working on a group Python 3.9 project (standard library only). Implement ONLY these files: `models/database.py`, `services/admin_subsystem.py`, `controllers/admin_controller.py`. The docstrings in those files are the specification, so follow them exactly. Rules: never use print() or input(); use only the functions in `utils/console.py` (menu/ask/warn_ask/info/error/line) with the level shown. Copy all wording and formats from `docs/spec/sample-io.md` word for word. For other cases use `utils/messages.py`. The service must not print. Use `pickle` to store one list of Student objects in students.data. Grades and pass/fail come from `student.overall_grade()`, `student.average_mark()` and `student.is_pass()`. Do not rename any class, method or parameter, and do not edit any other file. Keep the code simple and readable for a first-year student. After writing it, I will run `python tests/check.py m3`. Then explain each function to me in plain words so I can present it.",
+  "rules": [
+    "Only create or edit the files listed under 'Files to implement'. Never edit any other file.",
+    "Python 3.9 or newer, standard library only. No pip packages.",
+    "Never use print() or input(). Use only the utils.console functions (menu, ask, warn_ask, heading, info, error, line) with the level shown in 'Expected behaviour'.",
+    "Copy every Sample I/O text exactly, character for character, including the original spelling 'Droping'. For cases the Sample I/O does not show, use the constants in utils/messages.py.",
+    "Services (services/) never print. They read and write data only through self.database.load_students() and self.database.save_students(students).",
+    "Do not rename any existing class, method or parameter: other parts and the checks call them. Adding private helper methods is fine.",
+    "IDs are strings with leading zeros: student '002340' (6 digits), subject '097' (3 digits).",
+    "snake_case names, a one-line English docstring for every method, simple readable code a first-year student can explain.",
+    "Never crash on bad input (unknown option, empty input, unknown ID).",
+    "Extra behaviour is allowed only if it does not change any Sample I/O output.",
+    "Done means: every check in the command under 'How to check' says PASS.",
+    "After writing the code, explain each function in plain words so the student can present it in the Showcase."
+  ],
+  "files_to_implement": {
+    "controllers/admin_controller.py": "# controllers/admin_controller.py (interface only: signatures and docstrings, no method bodies)\n\"\"\"Admin System menu (rubric d, 15 marks).\n\nOwner: Yuchen C..\n\nUse utils.console for every line (never print/input). Copy the wording from\ndocs/spec/sample-io.md exactly. Admin lines are level 1 (LEVEL); the\n\"< Nothing to Display >\" line is level 2. Keep the class name, __init__ and\nrun() as they are; add any helper methods you like.\nCheck with:  python tests/check.py m3\nTry it with:  python dev_run.py admin   (demo data: John Smith and Alen Jones)\"\"\"\n\nfrom utils import console, messages\nLEVEL = console.LEVEL_1\n\nclass AdminController:\n\n    def __init__(self, admin):\n        self.admin = admin\n\n    def run(self):\n        \"\"\"Menu loop: console.menu(\"Admin System (c/g/p/r/s/x): \", LEVEL)\n              c -> clear, g -> group, p -> partition, r -> remove, s -> show, x -> return\n              anything else -> console.error(messages.INVALID_OPTION, LEVEL)\n\n        Show (p.6):       info \"Student List\"\n                          line \"John Smith :: 673358 --> Email: john.smith@university.com\"  (one per student)\n        Group (p.6):      info \"Grade Grouping\"\n                          line \"P  --> [Alen Jones :: 762740 --> GRADE:  P - MARK: 63.50]\"  (one per grade;\n                               grade left-aligned in 2 characters; GRADE right-aligned in 2; MARK 2 decimals;\n                               several students in one grade are joined with \", \")\n        Partition (p.6):  info \"PASS/FAIL Partition\"\n                          line \"FAIL --> [...]\"   then   line \"PASS --> [...]\"   (same student format; [] if none)\n        Show / Group with no students: line \"< Nothing to Display >\" at console.LEVEL_2\n        Remove (p.7):     ask \"Remove by ID: \"\n                          info \"Removing Student 762740 Account\"   or   error \"Student 777888 does not exist\"\n        Clear (p.7):      info \"Clearing students database\"\n                          warn_ask \"Are you sure you want to clear the database (Y)ES/(N)O: \"\n                          Y (or y) -> clear, then info \"Students data cleared\"; anything else -> nothing\n        \"\"\"\n        ...\n",
+    "services/admin_subsystem.py": "# services/admin_subsystem.py (interface only: signatures and docstrings, no method bodies)\n\"\"\"AdminSubsystem: admin rules for listing, grouping, partitioning and removing students\n(Part 1: AdminSubsystem; rubric d).\n\nOwner: Yuchen C..\n\nRules: no printing here (the Admin menu prints; services only work with data).\nRead and write students.data only through self.database.\nGrades and pass/fail come from the shared Student methods:\n    student.average_mark()   student.overall_grade()   student.is_pass()\nGroup by each student's AVERAGE grade, as the Sample I/O does (this replaces\nPart 1 assumption A1). Keep class/method names and parameters as they are.\nCheck with:  python tests/check.py m3\"\"\"\n\nGRADE_ORDER = (\"Z\", \"P\", \"C\", \"D\", \"HD\")\n\nclass AdminSubsystem:\n\n    def __init__(self, database):\n        self.database = database\n\n    def list_students(self):\n        \"\"\"All students in students.data, in the order they were registered.\"\"\"\n        ...\n\n    def group_by_grade(self):\n        \"\"\"Return {grade: [students]} using student.overall_grade(), keys in GRADE_ORDER,\n        grades with no students left out. Students keep their registration order.\n        \"\"\"\n        ...\n\n    def partition(self):\n        \"\"\"Return (failed, passed): two lists split by student.is_pass(), registration order.\"\"\"\n        ...\n\n    def remove_student(self, student_id):\n        \"\"\"Delete the student with this id from students.data. True if removed, False if not found.\"\"\"\n        ...\n\n    def clear_all(self):\n        \"\"\"Remove every student from students.data.\"\"\"\n        ...\n",
+    "models/database.py": "# models/database.py (interface only: signatures and docstrings, no method bodies)\n\"\"\"Database: every read and write of students.data (Part 1: FileManager; spec section 3).\n\nOwner: Yuchen C..\n\nstudents.data holds ONE Python list of Student objects (each Student keeps its\nSubject objects in student.subjects). Store it with the standard pickle module.\nKeep the class name, DEFAULT_PATH and the four methods exactly as they are -\nevery other part of the app uses them.\nCheck with:  python tests/check.py m3\"\"\"\n\nimport os\nimport pickle\nDEFAULT_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), \"students.data\")\n\nclass Database:\n\n    def __init__(self, path=DEFAULT_PATH):\n        self.path = path\n\n    def ensure_file(self):\n        \"\"\"If students.data does not exist yet, create it holding an empty list.\n        Never overwrite an existing file.\n        \"\"\"\n        ...\n\n    def load_students(self):\n        \"\"\"Call ensure_file(), then return the list of Student objects in students.data.\n        Return [] if the file is empty or cannot be read as a list.\n        \"\"\"\n        ...\n\n    def save_students(self, students):\n        \"\"\"Replace everything in students.data with this list of Student objects.\"\"\"\n        ...\n\n    def clear(self):\n        \"\"\"Remove every student: students.data afterwards holds an empty list.\"\"\"\n        ...\n"
+  },
+  "shared_code": {
+    "utils/console.py": "# utils/console.py (interface only: signatures and docstrings, no method bodies)\n\"\"\"Shared console input/output for CLIUniApp.\n\nOwner: Xinyi H. (shared foundation - do not edit; ask in the group chat first).\n\nEvery line the CLI shows goes through the functions below, so all four menus\nuse the same colours and indentation as the Sample I/O:\n\n    level 0  University System        (no indent)\n    level 1  Student / Admin System   (8 spaces)\n    level 2  Student Course Menu      (16 spaces)\n\n    menu(text, level)      cyan prompt for a menu choice  -> returns the answer\n    ask(text, level)       plain prompt for a field       -> returns the answer\n    warn_ask(text, level)  red prompt for a confirmation  -> returns the answer\n    heading(text, level)   green  - \"Student Sign Up\", \"Student Sign In\"\n    info(text, level)      yellow - progress and success messages\n    error(text, level)     red    - errors and warnings\n    line(text, level)      plain  - data lines (subjects, students)\n\nNever call print() or input() in the app code - always use these functions.\nAnswers are returned with surrounding spaces removed.\"\"\"\n\nimport os\nLEVEL_0 = 0\nLEVEL_1 = 1\nLEVEL_2 = 2\nINDENT = \" \" * 8\n\ndef menu(text, level=LEVEL_0):\n    \"\"\"Cyan menu prompt, e.g. menu(\"Admin System (c/g/p/r/s/x): \", 1).\"\"\"\n    ...\n\ndef ask(text, level=LEVEL_0):\n    \"\"\"Plain field prompt, e.g. ask(\"Email: \", 1).\"\"\"\n    ...\n\ndef warn_ask(text, level=LEVEL_0):\n    \"\"\"Red confirmation prompt, e.g. the clear-database (Y)ES/(N)O question.\"\"\"\n    ...\n\ndef heading(text, level=LEVEL_0):\n    \"\"\"Green heading, e.g. heading(\"Student Sign Up\", 1).\"\"\"\n    ...\n\ndef info(text, level=LEVEL_0):\n    \"\"\"Yellow progress/success message, e.g. info(\"Thank You\").\"\"\"\n    ...\n\ndef error(text, level=LEVEL_0):\n    \"\"\"Red error or warning, e.g. error(\"Student does not exist\", 1).\"\"\"\n    ...\n\ndef line(text, level=LEVEL_0):\n    \"\"\"Plain data line, e.g. one subject or one student.\"\"\"\n    ...\n",
+    "utils/messages.py": "# utils/messages.py (interface only: signatures and docstrings, no method bodies)\n\"\"\"Shared wording for situations the Sample I/O does not show.\n\nOwner: Xinyi H. (shared foundation - do not edit; ask in the group chat first).\n\nEverything the Sample I/O does show must be copied from it word for word\n(see docs/spec/sample-io.md). Use these constants only for the extra cases,\nso all four menus word them the same way.\"\"\"\n\nINVALID_OPTION = \"Invalid option - try again\"\nNAME_REQUIRED = \"Name cannot be empty\"\nINCORRECT_PASSWORD_FORMAT = \"Incorrect password format\"\nSUBJECT_NOT_FOUND = \"Subject {subject_id} does not exist\"\n",
+    "models/student.py": "# models/student.py (interface only: signatures and docstrings, no method bodies)\n\"\"\"Student data class (Part 1 class model, section 4).\n\nOwner: Xinyi H. (shared foundation - frozen: every part and students.data depend on it).\n\nBusiness rules live in the services; Student only stores data and works out\nits own average, grade and pass/fail.\"\"\"\n\nfrom models.subject import GradeCalculator\n\nclass Student:\n    \"\"\"A registered student.\n\n    id       -- 6-digit string with leading zeros, e.g. \"002340\"\n    name     -- e.g. \"Alen Jones\"\n    email    -- e.g. \"alen.jones@university.com\"\n    password -- e.g. \"Helloworld123\"\n    subjects -- list of Subject objects (0 to 4)\n    \"\"\"\n\n    def __init__(self, student_id, name, email, password):\n        self.id = student_id\n        self.name = name\n        self.email = email\n        self.password = password\n        self.subjects = []\n\n    def average_mark(self):\n        \"\"\"Average of all subject marks; 0.0 when the student has no subjects.\"\"\"\n        ...\n\n    def overall_grade(self):\n        \"\"\"Grade of the average mark (a student with no subjects is \"Z\").\"\"\"\n        ...\n\n    def is_pass(self):\n        \"\"\"True when the average mark is 50 or more.\"\"\"\n        ...\n",
+    "models/subject.py": "# models/subject.py (interface only: signatures and docstrings, no method bodies)\n\"\"\"Subject, SubjectFactory and GradeCalculator (Part 1 class model, section 4).\n\nOwner: Xinyi H. (shared foundation - frozen: other parts and students.data depend on it).\"\"\"\n\nimport random\n\nclass GradeCalculator:\n    \"\"\"Grade boundaries from Part 1, decision table 1.1.\n\n    Z < 50, P 50-64, C 65-74, D 75-84, HD >= 85. Works for a subject mark\n    and for a student's average mark.\n    \"\"\"\n\n    @staticmethod\n    def calculate_grade(mark):\n        ...\n\nclass Subject:\n    \"\"\"One enrolled subject.\n\n    id    -- 3-digit string with leading zeros, e.g. \"097\"\n    mark  -- int from 25 to 100\n    grade -- \"Z\", \"P\", \"C\", \"D\" or \"HD\", calculated from the mark\n    \"\"\"\n\n    def __init__(self, subject_id, mark):\n        self.id = subject_id\n        self.mark = mark\n        self.grade = GradeCalculator.calculate_grade(mark)\n\nclass SubjectFactory:\n    \"\"\"Creates subjects with an unused ID and a random mark.\n\n    Pass every subject ID already in use (across ALL students) so IDs stay\n    unique in the whole university, as decided in Part 1.\n    \"\"\"\n\n    def __init__(self, used_ids=()):\n        self.used_ids = set(used_ids)\n\n    def create_subject(self):\n        ...\n"
+  },
+  "placeholders": {
+    "{ID}": "random subject ID printed WITHOUT leading zeros, e.g. 97 or 541",
+    "{ID3}": "random subject ID WITH leading zeros, 3 digits, e.g. 097",
+    "{SID}": "random 6-digit student ID, e.g. 762740",
+    "{MARK}": "random mark from 25 to 100",
+    "{GRADE}": "grade right-aligned in 3 characters, e.g. '  P' or ' HD'",
+    "{AVG}": "average mark with 2 decimals, e.g. 63.50"
+  },
+  "checks": [
+    {
+      "id": "m3.database",
+      "title": "Database: create file, save/load students, clear, empty file",
+      "status": "TODO",
+      "verifies": [
+        "a new database loads as an empty list",
+        "load_students() must create students.data when it is missing",
+        "students must come back in the same order",
+        "subjects must be saved inside each student",
+        "ensure_file() must not wipe an existing file",
+        "clear() leaves an empty students.data",
+        "an empty (0-byte) students.data loads as []"
+      ],
+      "screens": []
+    },
+    {
+      "id": "m3.list-group-partition",
+      "title": "Show, group by grade, PASS/FAIL partition (p.6)",
+      "status": "TODO",
+      "verifies": [],
+      "screens": [
+        [
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "s"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Student List",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "John Smith :: 673358 --> Email: john.smith@university.com",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "Alen Jones :: 762740 --> Email: alen.jones@university.com",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "g"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Grade Grouping",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "P  --> [Alen Jones :: 762740 --> GRADE:  P - MARK: 63.50]",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "C  --> [John Smith :: 673358 --> GRADE:  C - MARK: 68.25]",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "p"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "PASS/FAIL Partition",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "FAIL --> []",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "PASS --> [John Smith :: 673358 --> GRADE:  C - MARK: 68.25, Alen Jones :: 762740 --> GRADE:  P - MARK: 63.50]",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "x"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "m3.remove-clear",
+      "title": "Remove by ID, unknown ID, clear N/Y, empty screens (p.7)",
+      "status": "TODO",
+      "verifies": [
+        "students.data must be empty after clearing"
+      ],
+      "screens": [
+        [
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "r"
+          },
+          {
+            "function": "console.ask",
+            "level": 1,
+            "text": "Remove by ID: ",
+            "user_types": "762740"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Removing Student 762740 Account",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "r"
+          },
+          {
+            "function": "console.ask",
+            "level": 1,
+            "text": "Remove by ID: ",
+            "user_types": "777888"
+          },
+          {
+            "function": "console.error",
+            "level": 1,
+            "text": "Student 777888 does not exist",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "c"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Clearing students database",
+            "user_types": null
+          },
+          {
+            "function": "console.warn_ask",
+            "level": 1,
+            "text": "Are you sure you want to clear the database (Y)ES/(N)O: ",
+            "user_types": "N"
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "s"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Student List",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "John Smith :: 673358 --> Email: john.smith@university.com",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "c"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Clearing students database",
+            "user_types": null
+          },
+          {
+            "function": "console.warn_ask",
+            "level": 1,
+            "text": "Are you sure you want to clear the database (Y)ES/(N)O: ",
+            "user_types": "Y"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Students data cleared",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "s"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Student List",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 2,
+            "text": "< Nothing to Display >",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "g"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Grade Grouping",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 2,
+            "text": "< Nothing to Display >",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "p"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "PASS/FAIL Partition",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "FAIL --> []",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "PASS --> []",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "x"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "m3.errors",
+      "title": "Error handling: invalid option, FAIL group, student without subjects",
+      "status": "TODO",
+      "verifies": [],
+      "screens": [
+        [
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "q"
+          },
+          {
+            "function": "console.error",
+            "level": 1,
+            "text": "Invalid option - try again",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "g"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "Grade Grouping",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "Z  --> [Weak Student :: 111111 --> GRADE:  Z - MARK: 35.00, New Student :: 222222 --> GRADE:  Z - MARK: 0.00]",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "p"
+          },
+          {
+            "function": "console.info",
+            "level": 1,
+            "text": "PASS/FAIL Partition",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "FAIL --> [Weak Student :: 111111 --> GRADE:  Z - MARK: 35.00, New Student :: 222222 --> GRADE:  Z - MARK: 0.00]",
+            "user_types": null
+          },
+          {
+            "function": "console.line",
+            "level": 1,
+            "text": "PASS --> []",
+            "user_types": null
+          },
+          {
+            "function": "console.menu",
+            "level": 1,
+            "text": "Admin System (c/g/p/r/s/x): ",
+            "user_types": "x"
+          }
+        ]
+      ]
+    }
+  ],
+  "task_card": "# Task card — Yuchen C. (m3)\n\n**Your part:** d Admin System: Show (1), Group (2), Partition (2), Remove (2), Clear (2), Read/Write to file (3), Error handling (2), Matching I/O (1) = **15 marks**\n**Part 1 link:** AdminSubsystem and FileManager → called `Database` in Part 2 because spec section 3 requires that name (stories 501–604, you designed these)\n**Branch:** `m3-admin`\n\n## Files you own\n\n| File | What goes in it |\n| --- | --- |\n| `models/database.py` | `ensure_file`, `load_students`, `save_students`, `clear` (pickle a list of Student objects) |\n| `services/admin_subsystem.py` | `list_students`, `group_by_grade`, `partition`, `remove_student`, `clear_all` |\n| `controllers/admin_controller.py` | Admin menu (c/g/p/r/s/x) and its output |\n\nEach method's docstring is the exact specification. The full Sample I/O is in `docs/spec/sample-io.md` (sections 7, 8).\n\n## Watch out\n\n- Everyone's code uses your `Database`, but you don't block anyone: `dev_run.py` and the checks use an in-memory stand-in until yours is merged.\n- Group by each student's **average** grade (`student.overall_grade()`). This is a change from our Part 1 assumption A1, because the Sample I/O groups whole students.\n- Exact formats matter: `P  --> [Alen Jones :: 762740 --> GRADE:  P - MARK: 63.50]` (grade padded to 2 characters on both sides, mark with 2 decimals, students joined by `, `).\n- `< Nothing to Display >` is one level deeper (level 2) than the other admin lines.\n- An empty or 0-byte `students.data` must load as `[]` without crashing.\n\n## Try it / check it\n\n```bash\npython dev_run.py admin              # demo: John Smith (C 68.25) and Alen Jones (P 63.50)\npython dev_run.py admin --real-db    # uses your Database and the real students.data\npython tests/check.py m3             # done = 4 PASS\n```\n\n## Done when\n\n- [ ] `python tests/check.py m3` shows 4 PASS\n- [ ] `docs/members/m3.md` is filled in\n- [ ] the PR template is filled in, and the PR is Ready by **Sat 24 Oct 23:59**\n\n## Prompt for your AI assistant\n\n> I'm Yuchen C., working on a group Python 3.9 project (standard library only). Implement ONLY these files: `models/database.py`, `services/admin_subsystem.py`, `controllers/admin_controller.py`. The docstrings in those files are the specification, so follow them exactly. Rules: never use print() or input(); use only the functions in `utils/console.py` (menu/ask/warn_ask/info/error/line) with the level shown. Copy all wording and formats from `docs/spec/sample-io.md` word for word. For other cases use `utils/messages.py`. The service must not print. Use `pickle` to store one list of Student objects in students.data. Grades and pass/fail come from `student.overall_grade()`, `student.average_mark()` and `student.is_pass()`. Do not rename any class, method or parameter, and do not edit any other file. Keep the code simple and readable for a first-year student. After writing it, I will run `python tests/check.py m3`. Then explain each function to me in plain words so I can present it.\n\nEasiest: give your AI the whole **AI pack** (`docs/ai/m3.md`, or Team Hub → My task → *For your AI assistant*). It already contains this prompt, the rules, your files, the shared code and the exact expected output.\n\n## Showcase (your ~1.5 minutes)\n\nDemo: show → group → partition → remove a student (and an unknown ID) → clear with N, then Y → show/group/partition on an empty file.\nCode walkthrough: `Database` (pickle, file created if missing), `group_by_grade()`, `partition()`, the output formats.\n"
+}
